@@ -15,8 +15,17 @@ class JsonController extends Controller
         $JsonData = json_decode($JsonData, true);
 
         $epochsData = $JsonData["epochs"];
+
+        //睡眠開始と終了時刻の処理
         $sleepAt = $JsonData["sleepAt"];
         $wakeUpAt = $JsonData["wakeUpAt"];
+
+        $sleepAt = strtotime($sleepAt);
+        $wakeUpAt = strtotime($wakeUpAt);
+
+        $newSleepAt = date("Y/m/d H:i:s", $sleepAt);
+        $newWakeUpAt = date("Y/m/d H:i:s", $wakeUpAt);
+
 
         //新しいデータを格納する配列
         $rows = [];
@@ -63,7 +72,7 @@ class JsonController extends Controller
             }
         }
         // dd($result);
-        return view("index", compact('result', 'sleepAt','wakeUpAt'));
+        return view("index", compact('result', 'newSleepAt','newWakeUpAt'));
     }
 }
 

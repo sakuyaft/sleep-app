@@ -21,13 +21,12 @@
     </form>
 
     <p>
-        @if (isset($sleepAt))
-            {{ $sleepAt }}
+        @if (isset($newSleepAt))
+            睡眠開始時刻：{{ $newSleepAt }}
         @endif
-    </p>
-    <p>
-        @if (isset($sleepAt))
-            {{ $wakeUpAt }}
+        <br>
+        @if (isset($newWakeUpAt))
+            睡眠終了時刻：{{ $newWakeUpAt }}
         @endif
     </p>
 
@@ -129,4 +128,3 @@
 </body>
 
 </html>
-
