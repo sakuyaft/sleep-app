@@ -20,15 +20,8 @@
         <button type="button" onclick="jsonUpload()">jsonアップロード</button>
     </form>
 
-    {{-- <p>
-        @if (isset($newSleepAt))
-            睡眠開始時刻：{{ $newSleepAt }}
-        @endif
-        <br>
-        @if (isset($newWakeUpAt))
-            睡眠終了時刻：{{ $newWakeUpAt }}
-        @endif
-    </p> --}}
+    <p id="sleep-at"></p>
+    <p id="wakeup-at"></p>
 
     <figure class="highcharts-figure">
         <div id="container"></div>
@@ -36,9 +29,6 @@
 
     <script>
         function jsonUpload() {
-
-            // const fd = new FormData();
-            // fd.append('jsonFile', jsonFile.files[0]);
 
             const jsonFileInput = document.getElementById('JsonFile');
             const fd = new FormData();
@@ -60,10 +50,12 @@
                         console.log('ok!!')
                     };
                     return response.json();
-                    // return response.text();
-                })
-                .then((result) => {
 
+                })
+                .then((data) => {
+                    console.log(data);
+
+                    //グラフ描画の処理
                     Highcharts.chart('container', {
                         chart: {
                             type: 'xrange'
@@ -93,7 +85,7 @@
                         },
                         series: [{
                             name: 'Project 1',
-                            data: result,
+                            data: data.result,
 
                             borderColor: 'gray',
                             pointWidth: 40,
@@ -102,6 +94,10 @@
                             }
                         }]
                     });
+                        //睡眠開始と終了時間表示の処理
+                        document.getElementById("sleep-at").innerHTML = "睡眠開始: " + data.newSleepAt;
+                        document.getElementById("wakeup-at").innerHTML = "睡眠終了: " + data.newWakeUpAt;
+
                 })
                 .catch(error => {
                     console.log(error);

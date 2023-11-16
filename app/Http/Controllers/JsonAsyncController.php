@@ -33,14 +33,14 @@ class JsonAsyncController extends Controller
         $epochsData = $JsonData["epochs"];
 
         //睡眠開始と終了時刻の処理
-        // $sleepAt = $JsonData["sleepAt"];
-        // $wakeUpAt = $JsonData["wakeUpAt"];
+        $sleepAt = $JsonData["sleepAt"];
+        $wakeUpAt = $JsonData["wakeUpAt"];
 
-        // $sleepAt = strtotime($sleepAt);
-        // $wakeUpAt = strtotime($wakeUpAt);
+        $sleepAt = strtotime($sleepAt);
+        $wakeUpAt = strtotime($wakeUpAt);
 
-        // $newSleepAt = date("Y/m/d H:i:s", $sleepAt);
-        // $newWakeUpAt = date("Y/m/d H:i:s", $wakeUpAt);
+        $newSleepAt = date("Y/m/d H:i:s", $sleepAt);
+        $newWakeUpAt = date("Y/m/d H:i:s", $wakeUpAt);
 
 
         //新しいデータを格納する配列
@@ -92,6 +92,7 @@ class JsonAsyncController extends Controller
         
         // echo json_encode($result);
         // return view("index", compact('result'));
-        return response()->json($result);
+
+        return response()->json(['result' => $result, 'newSleepAt' => $newSleepAt, 'newWakeUpAt' => $newWakeUpAt]);
     }
 }
