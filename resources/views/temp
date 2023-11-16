@@ -43,10 +43,8 @@
             const jsonFileInput = document.getElementById('JsonFile');
             const fd = new FormData();
             fd.append('JsonFile', jsonFileInput.files[0]);
-            console.log(fd);
 
-
-            fetch('{{ route('json_async') }}', {
+            fetch('{{ route("json_async") }}', {
                     method: 'POST',
                     body: fd,
                     headers: {
@@ -55,14 +53,16 @@
                 })
                 .then((response) => {
                     if (!response.ok) {
-                        console.log('error!!');
+                        console.log('error!');
                     } else {
-                        console.log('ok!!')
+                        console.log('ok!')
                     };
                     return response.json();
-                    // return response.text();
                 })
                 .then((result) => {
+                    //
+                    var chartData = @json($result ?? '');
+                    // var chartData = {!! json_encode($result ?? '') !!};
 
                     Highcharts.chart('container', {
                         chart: {
@@ -93,7 +93,7 @@
                         },
                         series: [{
                             name: 'Project 1',
-                            data: result,
+                            data: chartData,
 
                             borderColor: 'gray',
                             pointWidth: 40,

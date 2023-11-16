@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JsonAsyncController;
 use App\Http\Controllers\JsonController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,5 @@ Route::get('/', function () {
 
 
 Route::post('/json_process',[JsonController::class,'process'])->name('json_process');
+
+Route::post('/json_async',[JsonAsyncController::class,'process'])->name('json_async');

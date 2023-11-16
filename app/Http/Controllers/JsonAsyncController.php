@@ -2,29 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use Facade\FlareClient\Stacktrace\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
-class JsonController extends Controller
+class JsonAsyncController extends Controller
 {
     public function process(Request $request)
     {
+        if ($request === null) {
+            return response()->json(['error' => '$request is null'], 400);
+        }
 
-        $file = $request->file("jsonFile");
-        $JsonData = file_get_contents($file->getRealPath());
-        //インポートしたjsonデータを新しいデータ形式に変更
-        $JsonData = json_decode($JsonData, true);
+        // 'JsonFile'キーの値（UploadedFileオブジェクト）を取得
+        $uploadedFile = $request->file('JsonFile');
+
+        // アップロードされたファイルの内容を取得
+        $data = file_get_contents($uploadedFile->getRealPath());
+
+        if ($data === null) {
+            return response()->json(['error' => '$data is null'], 400);
+        }
+
+        $JsonData = json_decode($data, true);
+
+        if ($JsonData === null) {
+            return response()->json(['error' => '$JsonData is null'], 400);
+        }
 
         $epochsData = $JsonData["epochs"];
 
         //睡眠開始と終了時刻の処理
-        $sleepAt = $JsonData["sleepAt"];
-        $wakeUpAt = $JsonData["wakeUpAt"];
+        // $sleepAt = $JsonData["sleepAt"];
+        // $wakeUpAt = $JsonData["wakeUpAt"];
 
-        $sleepAt = strtotime($sleepAt);
-        $wakeUpAt = strtotime($wakeUpAt);
+        // $sleepAt = strtotime($sleepAt);
+        // $wakeUpAt = strtotime($wakeUpAt);
 
-        $newSleepAt = date("Y/m/d H:i:s", $sleepAt);
-        $newWakeUpAt = date("Y/m/d H:i:s", $wakeUpAt);
+        // $newSleepAt = date("Y/m/d H:i:s", $sleepAt);
+        // $newWakeUpAt = date("Y/m/d H:i:s", $wakeUpAt);
 
 
         //新しいデータを格納する配列
@@ -71,10 +87,11 @@ class JsonController extends Controller
                 $cnt++;
             }
         }
-        // dd($result);
-        return view("index", compact('result', 'newSleepAt','newWakeUpAt'));
+
+        Log::info('Result:', ['result' => $result]);
+        
+        // echo json_encode($result);
+        // return view("index", compact('result'));
+        return response()->json($result);
     }
 }
-
-//非同期通信
-

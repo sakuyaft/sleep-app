@@ -14,13 +14,13 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-    <form enctype="multipart/form-data">
+    <form name="myForm" class="fetchForm" id="json-upload-file">
         @csrf
-        <input type="file" id="JsonFile" name="JsonFile">
-        <button type="button" onclick="jsonUpload()">jsonアップロード</button>
+        <input type="file">
+        <input type="submit" value="アップロード">
     </form>
 
-    {{-- <p>
+    <p>
         @if (isset($newSleepAt))
             睡眠開始時刻：{{ $newSleepAt }}
         @endif
@@ -28,42 +28,41 @@
         @if (isset($newWakeUpAt))
             睡眠終了時刻：{{ $newWakeUpAt }}
         @endif
-    </p> --}}
+    </p>
 
     <figure class="highcharts-figure">
         <div id="container"></div>
     </figure>
 
     <script>
-        function jsonUpload() {
+        // const fetchForm = document.querySelector('.fetchForm');
+        // const btn = document.querySelector('.btn');
 
-            // const fd = new FormData();
-            // fd.append('jsonFile', jsonFile.files[0]);
+        const myFormElm = document.forms.myForm; // フォーム要素を取得
+        myFormElm.addEventListener('submit', (e) => { // 送信ボタンが押されたら実行
+            e.preventDefault();
+            const formData = new FormData(myFormElm); // フォームオブジェクト作成
 
-            const jsonFileInput = document.getElementById('JsonFile');
-            const fd = new FormData();
-            fd.append('JsonFile', jsonFileInput.files[0]);
-            console.log(fd);
-
-
-            fetch('{{ route('json_async') }}', {
+            fetch('{{ route('jason_async') }}', {
                     method: 'POST',
-                    body: fd,
+                    body: JSON.stringify(formData),
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        // 'Content-Type': 'application/json'
                     },
+
                 })
                 .then((response) => {
                     if (!response.ok) {
-                        console.log('error!!');
+                        console.log('error!');
                     } else {
-                        console.log('ok!!')
+                        console.log('ok!')
                     };
                     return response.json();
-                    // return response.text();
                 })
                 .then((result) => {
-
+                    //処理が成功した場合の処理
+                    var chartData = @json($result ?? '');
                     Highcharts.chart('container', {
                         chart: {
                             type: 'xrange'
@@ -93,7 +92,7 @@
                         },
                         series: [{
                             name: 'Project 1',
-                            data: result,
+                            data: chartData,
 
                             borderColor: 'gray',
                             pointWidth: 40,
@@ -106,7 +105,75 @@
                 .catch(error => {
                     console.log(error);
                 })
-        };
+        });
+
+
+        // const postFetch = () => {
+        //     let formData = new FormData(document.getElementById('json-upload-file'));
+
+        //     fetch('{{ route('jason_async') }}', {
+        //             method: 'POST',
+        //             body: JSON.stringify(formData),
+        //             headers: {
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //         })
+        //         .then((response) => {
+        //             if (!response.ok) {
+        //                 console.log('error!');
+        //             } else {
+        //                 console.log('ok!')
+        //             };
+        //             return response.json();
+        //         })
+        //         .then((result) => {
+        //             //処理が成功した場合の処理
+        //             var chartData = @json($result ?? '');
+        //             Highcharts.chart('container', {
+        //                 chart: {
+        //                     type: 'xrange'
+        //                 },
+        //                 title: {
+        //                     text: '睡眠グラフ'
+        //                 },
+
+        //                 time: {
+        //                     useUTC: false,
+        //                     timezone: 'Asia/Tokyo',
+        //                 },
+        //                 accessibility: {
+        //                     point: {
+        //                         descriptionFormat: '{add index 1}. {yCategory}, {x:%A %e %B %Y} to {x2:%A %e %B %Y}.'
+        //                     }
+        //                 },
+        //                 xAxis: {
+        //                     type: 'datetime'
+        //                 },
+        //                 yAxis: {
+        //                     title: {
+        //                         text: ''
+        //                     },
+        //                     categories: ['Awake', 'REM', 'Light', 'Deep'],
+        //                     reversed: true
+        //                 },
+        //                 series: [{
+        //                     name: 'Project 1',
+        //                     data: chartData,
+
+        //                     borderColor: 'gray',
+        //                     pointWidth: 40,
+        //                     dataLabels: {
+        //                         enabled: true
+        //                     }
+        //                 }]
+        //             });
+        //         })
+        //         .catch(error => {
+        //             console.log(error);
+        //         })
+        // };
+
+        // btn.addEventListener('click', postFetch, false);
     </script>
     <style>
         #container {
