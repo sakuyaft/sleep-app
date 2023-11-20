@@ -30,7 +30,9 @@ class JsonAsyncController extends Controller
             return response()->json(['error' => '$JsonData is null'], 400);
         }
 
-        //睡眠開始と終了時刻表示の処理
+        $epochsData = $JsonData["epochs"];
+
+        //睡眠開始と終了時刻の処理
         $sleepAt = $JsonData["sleepAt"];
         $wakeUpAt = $JsonData["wakeUpAt"];
 
@@ -40,14 +42,18 @@ class JsonAsyncController extends Controller
         $newSleepAt = date("Y/m/d H:i:s", $sleepAt);
         $newWakeUpAt = date("Y/m/d H:i:s", $wakeUpAt);
 
-        //睡眠深度表示の処理
-        $epochsData = $JsonData["epochs"];
 
-        $rows = array_map(function($epoch){
-            $timestamp = strtotime($epoch["analyzedAt"]);
+        //新しいデータを格納する配列
+        $rows = [];
+
+        foreach ($epochsData as $epoch) {
+            $analyzedAt = $epoch["analyzedAt"];
+            $depth = $epoch["depth"];
+
+            $timestamp = strtotime($analyzedAt);
             $newTime = date("Y/m/d H:i:s", $timestamp);
 
-            switch ($epoch["depth"]){
+            switch ($depth) {
                 case "awake":
                     $newDepth = "0";
                     break;
@@ -60,14 +66,11 @@ class JsonAsyncController extends Controller
                 case "deep":
                     $newDepth = "3";
                     break;
-                default:
-                    $newDepth = null;
             }
 
-            return [$newTime, $newDepth];
-        }, $epochsData);
+            $rows[] = [$newTime, $newDepth];
+        };
 
-        //睡眠深度ごとにグループ化
         $result = [];
         $cnt = 0;
         foreach ($rows as $key => $row) {
