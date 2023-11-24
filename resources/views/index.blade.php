@@ -13,6 +13,7 @@
     <script src="https://code.highcharts.com/modules/xrange.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    {{-- <script src="https://code.highcharts.com/modules/export-data.js"></script> --}}
 
     <form enctype="multipart/form-data">
         @csrf
@@ -20,14 +21,32 @@
         <button type="button" onclick="jsonUpload()">jsonアップロード</button>
     </form>
 
+
+    <div id="container"></div>
     <p id="sleep-at"></p>
     <p id="wakeup-at"></p>
-
     <figure class="highcharts-figure">
-        <div id="container"></div>
+        <div id="graph"></div>
     </figure>
 
+
     <script>
+        //カウンターセット
+        let chartCounter = 1;
+
+        //メニューの日本語化
+        Highcharts.setOptions({
+            lang: {
+                viewFullscreen: '全画面で表示',
+                contextButtonTitle: '画像としてダウンロード',
+                printChart: 'グラフを印刷',
+                downloadJPEG: 'JPEG画像でダウンロード',
+                downloadPDF: 'PDF文書でダウンロード',
+                downloadPNG: 'PNG画像でダウンロード',
+                downloadSVG: 'SVG形式でダウンロード',
+            }
+        });
+
         function jsonUpload() {
 
             const jsonFileInput = document.getElementById('JsonFile');
@@ -45,9 +64,9 @@
                 })
                 .then((response) => {
                     if (!response.ok) {
-                        console.log('error!!');
+                        console.log('error!');
                     } else {
-                        console.log('ok!!')
+                        console.log('ok!')
                     };
                     return response.json();
 
@@ -55,8 +74,13 @@
                 .then((data) => {
                     console.log(data);
 
+                    //既存のグラフの下に追加表示する処理
+                    const newChart = document.createElement('div');
+                    newChart.id = 'graph' + chartCounter;
+                    document.getElementById('graph').appendChild(newChart);
+
                     //グラフ描画の処理
-                    Highcharts.chart('container', {
+                    Highcharts.chart(newChart.id, {
                         chart: {
                             type: 'xrange'
                         },
@@ -84,7 +108,7 @@
                             reversed: true
                         },
                         series: [{
-                            name: 'Project 1',
+                            name: 'グラフ' + chartCounter,
                             data: data.result,
 
                             borderColor: 'gray',
@@ -94,10 +118,22 @@
                             }
                         }]
                     });
-                        //睡眠開始と終了時間表示の処理
-                        document.getElementById("sleep-at").innerHTML = "睡眠開始: " + data.newSleepAt;
-                        document.getElementById("wakeup-at").innerHTML = "睡眠終了: " + data.newWakeUpAt;
 
+                    //睡眠開始表示の処理
+                    const sleepAttime = document.createElement('p');
+                    sleepAttime.id = 'sleep-at' + chartCounter;
+                    document.getElementById('sleep-at').appendChild(sleepAttime);
+
+                    document.getElementById(sleepAttime.id).innerHTML = "睡眠開始: " + data.newSleepAt;
+
+                    //睡眠終了表示の処理
+                    const wakeUpTime = document.createElement('p');
+                    wakeUpTime.id = 'wakeup-at' + chartCounter;
+                    document.getElementById('wakeup-at').appendChild(wakeUpTime);
+                    document.getElementById(wakeUpTime.id).innerHTML = "睡眠終了: " + data.newWakeUpAt;
+
+
+                    chartCounter++;
                 })
                 .catch(error => {
                     console.log(error);
@@ -105,7 +141,7 @@
         };
     </script>
     <style>
-        #container {
+        #graph {
             width: 100%;
             height: 300px;
         }

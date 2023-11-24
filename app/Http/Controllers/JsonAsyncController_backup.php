@@ -46,6 +46,7 @@ class JsonAsyncController extends Controller
         //新しいデータを格納する配列
         $rows = [];
 
+        //睡眠深度の値を変換
         foreach ($epochsData as $epoch) {
             $analyzedAt = $epoch["analyzedAt"];
             $depth = $epoch["depth"];
@@ -71,6 +72,7 @@ class JsonAsyncController extends Controller
             $rows[] = [$newTime, $newDepth];
         };
 
+        //睡眠深度ごとにグループ化
         $result = [];
         $cnt = 0;
         foreach ($rows as $key => $row) {
