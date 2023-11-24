@@ -20,15 +20,14 @@
         <input type="file" id="JsonFile" name="JsonFile">
         <button type="button" onclick="jsonUpload()">jsonアップロード</button>
     </form>
-
-
-    <div id="container"></div>
-    <p id="sleep-at"></p>
-    <p id="wakeup-at"></p>
-    <figure class="highcharts-figure">
-        <div id="graph"></div>
-    </figure>
-
+{{-- 
+    <div id="container">
+        <p id="sleep-at"></p>
+        <p id="wakeup-at"></p>
+        <figure class="highcharts-figure">
+            <div id="graph"></div>
+        </figure>
+    </div> --}}
 
     <script>
         //カウンターセット
@@ -74,10 +73,15 @@
                 .then((data) => {
                     console.log(data);
 
-                    //既存のグラフの下に追加表示する処理
+                    //新しいcontainerを作成
+                    const newContainer = document.createElement('div');
+                    newContainer.id = 'container' + chartCounter;
+                    document.body.appendChild(newContainer);
+
+                    //新しいグラフを追加
                     const newChart = document.createElement('div');
                     newChart.id = 'graph' + chartCounter;
-                    document.getElementById('graph').appendChild(newChart);
+                    newContainer.appendChild(newChart);
 
                     //グラフ描画の処理
                     Highcharts.chart(newChart.id, {
@@ -122,14 +126,15 @@
                     //睡眠開始表示の処理
                     const sleepAttime = document.createElement('p');
                     sleepAttime.id = 'sleep-at' + chartCounter;
-                    document.getElementById('sleep-at').appendChild(sleepAttime);
-
+                    // document.getElementById('sleep-at').appendChild(sleepAttime);
+                    newContainer.appendChild(sleepAttime);
                     document.getElementById(sleepAttime.id).innerHTML = "睡眠開始: " + data.newSleepAt;
 
                     //睡眠終了表示の処理
                     const wakeUpTime = document.createElement('p');
                     wakeUpTime.id = 'wakeup-at' + chartCounter;
-                    document.getElementById('wakeup-at').appendChild(wakeUpTime);
+                    // document.getElementById('wakeup-at').appendChild(wakeUpTime);
+                    newContainer.appendChild(wakeUpTime);
                     document.getElementById(wakeUpTime.id).innerHTML = "睡眠終了: " + data.newWakeUpAt;
 
 
