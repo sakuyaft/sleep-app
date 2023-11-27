@@ -20,12 +20,13 @@
         <input type="file" id="JsonFile" name="JsonFile">
         <button type="button" onclick="jsonUpload()">jsonアップロード</button>
     </form>
-{{-- 
+    {{-- 
     <div id="container">
-        <p id="sleep-at"></p>
-        <p id="wakeup-at"></p>
         <figure class="highcharts-figure">
             <div id="graph"></div>
+            <p id="sleep-at"></p>
+            <p id="wakeup-at"></p>
+            <button id="delete">削除する</button>
         </figure>
     </div> --}}
 
@@ -126,17 +127,26 @@
                     //睡眠開始表示の処理
                     const sleepAttime = document.createElement('p');
                     sleepAttime.id = 'sleep-at' + chartCounter;
-                    // document.getElementById('sleep-at').appendChild(sleepAttime);
                     newContainer.appendChild(sleepAttime);
                     document.getElementById(sleepAttime.id).innerHTML = "睡眠開始: " + data.newSleepAt;
 
                     //睡眠終了表示の処理
                     const wakeUpTime = document.createElement('p');
                     wakeUpTime.id = 'wakeup-at' + chartCounter;
-                    // document.getElementById('wakeup-at').appendChild(wakeUpTime);
                     newContainer.appendChild(wakeUpTime);
                     document.getElementById(wakeUpTime.id).innerHTML = "睡眠終了: " + data.newWakeUpAt;
 
+                    //削除ボタンを作成
+                    const newBtn = document.createElement('button');
+                    newBtn.id = 'delete' + chartCounter;
+                    newContainer.appendChild(newBtn);
+                    document.getElementById(newBtn.id).innerHTML = '削除';
+
+                    // 削除ボタンにクリックイベントを追加
+                    newBtn.addEventListener('click', function() {
+                        const index = newBtn.id.replace('delete', '');
+                        deleteChart(index);
+                    });
 
                     chartCounter++;
                 })
@@ -144,6 +154,15 @@
                     console.log(error);
                 })
         };
+
+        //削除処理の内容
+        function deleteChart(chartCounter) {
+            const containerToRemove = document.getElementById('container' + chartCounter);
+            if (containerToRemove) {
+                containerToRemove.remove();
+            }
+        }
+        
     </script>
     <style>
         #graph {
