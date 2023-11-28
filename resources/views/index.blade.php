@@ -20,13 +20,13 @@
         <input type="file" id="JsonFile" name="JsonFile">
         <button type="button" onclick="jsonUpload()">jsonアップロード</button>
     </form>
-    {{-- 
-    <div id="container">
+
+    {{-- <div id="container">
         <figure class="highcharts-figure">
-            <div id="graph"></div>
             <p id="sleep-at"></p>
             <p id="wakeup-at"></p>
-            <button id="delete">削除する</button>
+            <div id="graph"></div>
+            <button id="delete" style="text-align: center;">削除する</button>
         </figure>
     </div> --}}
 
@@ -78,6 +78,18 @@
                     newContainer.id = 'container' + chartCounter;
                     document.body.appendChild(newContainer);
 
+                     //睡眠開始表示の処理
+                     const sleepAttime = document.createElement('p');
+                    sleepAttime.id = 'sleep-at' + chartCounter;
+                    newContainer.appendChild(sleepAttime);
+                    document.getElementById(sleepAttime.id).innerHTML = "睡眠開始: " + data.newSleepAt;
+
+                    //睡眠終了表示の処理
+                    const wakeUpTime = document.createElement('p');
+                    wakeUpTime.id = 'wakeup-at' + chartCounter;
+                    newContainer.appendChild(wakeUpTime);
+                    document.getElementById(wakeUpTime.id).innerHTML = "睡眠終了: " + data.newWakeUpAt;
+
                     //新しいグラフを追加
                     const newChart = document.createElement('div');
                     newChart.id = 'graph' + chartCounter;
@@ -123,23 +135,13 @@
                         }]
                     });
 
-                    //睡眠開始表示の処理
-                    const sleepAttime = document.createElement('p');
-                    sleepAttime.id = 'sleep-at' + chartCounter;
-                    newContainer.appendChild(sleepAttime);
-                    document.getElementById(sleepAttime.id).innerHTML = "睡眠開始: " + data.newSleepAt;
-
-                    //睡眠終了表示の処理
-                    const wakeUpTime = document.createElement('p');
-                    wakeUpTime.id = 'wakeup-at' + chartCounter;
-                    newContainer.appendChild(wakeUpTime);
-                    document.getElementById(wakeUpTime.id).innerHTML = "睡眠終了: " + data.newWakeUpAt;
-
                     //削除ボタンを作成
                     const newBtn = document.createElement('button');
                     newBtn.id = 'delete' + chartCounter;
                     newContainer.appendChild(newBtn);
-                    document.getElementById(newBtn.id).innerHTML = '削除';
+                    newBtn.style.display = "block";
+                    newBtn.style.margin = "0 auto";
+                    document.getElementById(newBtn.id).innerHTML = '削除する';
 
                     // 削除ボタンにクリックイベントを追加
                     newBtn.addEventListener('click', function() {
@@ -161,9 +163,9 @@
                 containerToRemove.remove();
             }
         }
-
     </script>
     <style>
+        /* display: block;とmargin: 0 auto; */
         #graph {
             width: 100%;
             height: 300px;
@@ -211,7 +213,9 @@
         .highcharts-data-table tr:hover {
             background: #f1f7ff;
         }
+
     </style>
 </body>
 
 </html>
+
