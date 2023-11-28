@@ -52,7 +52,6 @@
             const jsonFileInput = document.getElementById('JsonFile');
             const fd = new FormData();
             fd.append('JsonFile', jsonFileInput.files[0]);
-            console.log(fd);
 
 
             fetch('{{ route('json_async') }}', {
@@ -162,7 +161,7 @@
                 containerToRemove.remove();
             }
         }
-        
+
     </script>
     <style>
         #graph {

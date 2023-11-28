@@ -8,6 +8,19 @@ use Illuminate\Support\Facades\Log;
 
 class JsonAsyncController extends Controller
 {
+
+    protected function getDepth($depthKey)
+    {
+        $depth = [
+            "awake" => 0,
+            "REM" => 1,
+            "light" => 2,
+            "deep" => 3
+        ];
+
+        return $depth[$depthKey] ?? null;
+    }
+    
     public function process(Request $request)
     {
         if ($request === null) {
@@ -16,6 +29,7 @@ class JsonAsyncController extends Controller
 
         // 'JsonFile'キーの値（UploadedFileオブジェクト）を取得
         $uploadedFile = $request->file('JsonFile');
+        
 
         // アップロードされたファイルの内容を取得
         $data = file_get_contents($uploadedFile->getRealPath());
@@ -24,6 +38,11 @@ class JsonAsyncController extends Controller
             return response()->json(['error' => '$data is null'], 400);
         }
 
+        // if ($data !== null) {
+        //     return response()->json($data);
+        // }
+        
+        //jsonをデコード
         $JsonData = json_decode($data, true);
 
         if ($JsonData === null) {
@@ -43,29 +62,54 @@ class JsonAsyncController extends Controller
         //睡眠深度表示の処理
         $epochsData = $JsonData["epochs"];
 
-        $rows = array_map(function($epoch){
-            $timestamp = strtotime($epoch["analyzedAt"]);
+        //protectedで定義したデータを使用して、$epochsDataのdepthの値を変換する処理
+        //$rowsに$newTime, $newDepthを返却
+
+        $rows = array_map(function($data){
+            $timestamp = strtotime($data["analyzedAt"]);
             $newTime = date("Y/m/d H:i:s", $timestamp);
 
-            switch ($epoch["depth"]){
-                case "awake":
-                    $newDepth = "0";
-                    break;
-                case "REM":
-                    $newDepth = "1";
-                    break;
-                case "light":
-                    $newDepth = "2";
-                    break;
-                case "deep":
-                    $newDepth = "3";
-                    break;
-                default:
-                    $newDepth = null;
-            }
+            $newDepth = $this->getDepth($data["depth"]);
 
             return [$newTime, $newDepth];
+
         }, $epochsData);
+
+
+
+        // $rows = array_map(function($epoch){
+        //     $timestamp = strtotime($epoch["analyzedAt"]);
+        //     $newTime = date("Y/m/d H:i:s", $timestamp);
+
+        //     switch ($epoch["depth"]){
+        //         case "awake":
+        //             $newDepth = "0";
+        //             break;
+        //         case "REM":
+        //             $newDepth = "1";
+        //             break;
+        //         case "light":
+        //             $newDepth = "2";
+        //             break;
+        //         case "deep":
+        //             $newDepth = "3";
+        //             break;
+        //         default:
+        //             $newDepth = null;
+        //     }
+
+        //     return [$newTime, $newDepth];
+        // }, $epochsData);
+
+        // $rows = [
+        //     ["2023/01/01 12:00:00", 0], key = 1
+        //     ["2023/01/01 12:30:00", 0], key = 2
+        //     ["2023/01/01 13:00:00", 1], key = 3
+        //     ["2023/01/01 14:00:00", 1], key = 4 
+        //     ["2023/01/01 15:00:00", 0], key = 5
+        //     ["2023/01/01 15:30:00", 0], key = 6
+        // ];
+
 
         //睡眠深度ごとにグループ化
         $result = [];
@@ -85,10 +129,7 @@ class JsonAsyncController extends Controller
             }
         }
 
-        Log::info('Result:', ['result' => $result]);
-        
-        // echo json_encode($result);
-        // return view("index", compact('result'));
+        Log::info('$result:', ['result' => $result]);
 
         return response()->json(['result' => $result, 'newSleepAt' => $newSleepAt, 'newWakeUpAt' => $newWakeUpAt]);
     }
