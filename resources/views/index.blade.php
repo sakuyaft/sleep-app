@@ -96,7 +96,7 @@
                     newContainer.appendChild(newChart);
 
                     //グラフ描画の処理
-                    Highcharts.chart(newChart.id, {
+                   Highcharts.chart(newChart, {
                         chart: {
                             type: 'xrange'
                         },
@@ -137,39 +137,39 @@
                         exporting: {
                             menuItemDefinitions: {
                                 // Custom definition
-                                label: {
+                                lavel: {
                                     onclick: function() {
-                                        const containerToRemove = document.getElementById('container' + chartCounter);
-                                        if (containerToRemove) {
-                                            containerToRemove.remove();
+                                        // const chartId = this.id;
+                                        const containerElement = document.getElementById(newContainer.id);
+                                        if (containerElement) {
+                                            containerElement.remove();
                                         }
-
                                     },
                                     text: '削除'
                                 }
                             },
                             buttons: {
                                 contextButton: {
-                                    menuItems: ['downloadPNG', 'downloadSVG', 'separator', 'label']
+                                    menuItems: ['downloadPNG', 'downloadSVG', 'separator', 'lavel'],
                                 }
                             }
                         }
 
                     });
 
-                    //削除ボタンを作成
-                    const newBtn = document.createElement('button');
-                    newBtn.id = 'delete' + chartCounter;
-                    newContainer.appendChild(newBtn);
-                    newBtn.style.display = "block";
-                    newBtn.style.margin = "0 auto";
-                    document.getElementById(newBtn.id).innerHTML = '削除する';
+                    // //削除ボタンを作成
+                    // const newBtn = document.createElement('button');
+                    // newBtn.id = 'delete' + chartCounter;
+                    // newContainer.appendChild(newBtn);
+                    // newBtn.style.display = "block";
+                    // newBtn.style.margin = "0 auto";
+                    // document.getElementById(newBtn.id).innerHTML = '削除する';
 
-                    // 削除ボタンにクリックイベントを追加
-                    newBtn.addEventListener('click', function() {
-                        const index = newBtn.id.replace('delete', '');
-                        deleteChart(index);
-                    });
+                    // // 削除ボタンにクリックイベントを追加
+                    // newBtn.addEventListener('click', function() {
+                    //     const index = newBtn.id.replace('delete', '');
+                    //     deleteChart(index);
+                    // });
 
                     chartCounter++;
                 })
