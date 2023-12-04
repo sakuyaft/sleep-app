@@ -78,8 +78,8 @@
                     newContainer.id = 'container' + chartCounter;
                     document.body.appendChild(newContainer);
 
-                     //睡眠開始表示の処理
-                     const sleepAttime = document.createElement('p');
+                    //睡眠開始表示の処理
+                    const sleepAttime = document.createElement('p');
                     sleepAttime.id = 'sleep-at' + chartCounter;
                     newContainer.appendChild(sleepAttime);
                     document.getElementById(sleepAttime.id).innerHTML = "睡眠開始: " + data.newSleepAt;
@@ -132,7 +132,29 @@
                             dataLabels: {
                                 enabled: true
                             }
-                        }]
+                        }],
+
+                        exporting: {
+                            menuItemDefinitions: {
+                                // Custom definition
+                                label: {
+                                    onclick: function() {
+                                        const containerToRemove = document.getElementById('container' + chartCounter);
+                                        if (containerToRemove) {
+                                            containerToRemove.remove();
+                                        }
+
+                                    },
+                                    text: '削除'
+                                }
+                            },
+                            buttons: {
+                                contextButton: {
+                                    menuItems: ['downloadPNG', 'downloadSVG', 'separator', 'label']
+                                }
+                            }
+                        }
+
                     });
 
                     //削除ボタンを作成
@@ -213,9 +235,7 @@
         .highcharts-data-table tr:hover {
             background: #f1f7ff;
         }
-
     </style>
 </body>
 
 </html>
-
