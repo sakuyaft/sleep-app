@@ -21,16 +21,9 @@
         <button type="button" onclick="jsonUpload()">jsonアップロード</button>
     </form>
 
-    {{-- <div id="container">
-        <p id="sleep-at"></p>
-        <p id="wakeup-at"></p> --}}
     <figure class="highcharts-figure">
-        {{-- <div id="graph"></div> --}}
-        {{-- <button id="delete" style="text-align: center;">削除する</button> --}}
     </figure>
-    <p></p>
-    {{-- </div> --}}
-
+    
     <script>
         //カウンターセット
         let chartCounter = 1;
@@ -189,12 +182,6 @@
         }
     </script>
     <style>
-        /* display: block;とmargin: 0 auto; */
-        /* #graph {
-            width: 70%;
-            height: 300px;
-        } */
-
         div[id^="graph"] {
             width: 70%;
             height: 300px;
