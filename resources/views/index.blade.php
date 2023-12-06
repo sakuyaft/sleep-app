@@ -22,13 +22,14 @@
     </form>
 
     {{-- <div id="container">
-        <figure class="highcharts-figure">
-            <p id="sleep-at"></p>
-            <p id="wakeup-at"></p>
-            <div id="graph"></div>
-            <button id="delete" style="text-align: center;">削除する</button>
-        </figure>
-    </div> --}}
+        <p id="sleep-at"></p>
+        <p id="wakeup-at"></p> --}}
+    <figure class="highcharts-figure">
+        {{-- <div id="graph"></div> --}}
+        {{-- <button id="delete" style="text-align: center;">削除する</button> --}}
+    </figure>
+    <p></p>
+    {{-- </div> --}}
 
     <script>
         //カウンターセット
@@ -76,7 +77,8 @@
                     //新しいcontainerを作成
                     const newContainer = document.createElement('div');
                     newContainer.id = 'container' + chartCounter;
-                    document.body.appendChild(newContainer);
+                    const figureArea = document.querySelector('figure');
+                    figureArea.appendChild(newContainer);
 
                     //睡眠開始表示の処理
                     const sleepAttime = document.createElement('p');
@@ -96,7 +98,7 @@
                     newContainer.appendChild(newChart);
 
                     //グラフ描画の処理
-                   Highcharts.chart(newChart, {
+                    Highcharts.chart(newChart, {
                         chart: {
                             type: 'xrange'
                         },
@@ -188,10 +190,25 @@
     </script>
     <style>
         /* display: block;とmargin: 0 auto; */
-        #graph {
-            width: 100%;
+        /* #graph {
+            width: 70%;
             height: 300px;
+        } */
+
+        div[id^="graph"] {
+            width: 70%;
+            height: 300px;
+            margin: auto
         }
+
+        p[id^="sleep-at"] {
+            text-align: center;
+        }
+
+        p[id^="wakeup-at"] {
+            text-align: center;
+        }
+
 
         .highcharts-figure,
         .highcharts-data-table table {
