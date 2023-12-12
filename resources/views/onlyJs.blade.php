@@ -62,7 +62,7 @@
                 console.log(epochsDatas);
 
                 // 睡眠深度変換の処理と睡眠深度ごとにグループ化
-                // let result = [];
+                let results = [];
                 let cnt = 0;
 
                 epochsDatas.forEach(function(epochData, index) {
