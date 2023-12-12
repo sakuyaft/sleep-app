@@ -36,6 +36,15 @@ class HeartRateController extends Controller
 
         //睡眠開始と終了時刻表示の処理
 
+        $sleepAt = $JsonData["sleepAt"];
+        $wakeUpAt = $JsonData["wakeUpAt"];
+
+        $sleepAt = strtotime($sleepAt);
+        $wakeUpAt = strtotime($wakeUpAt);
+
+        $newSleepAt = date("Y/m/d H:i:s", $sleepAt);
+        $newWakeUpAt = date("Y/m/d H:i:s", $wakeUpAt);
+
 
         return response()->json(['result' => $result, 'newSleepAt' => $newSleepAt, 'newWakeUpAt' => $newWakeUpAt]);
 

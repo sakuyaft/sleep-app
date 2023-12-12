@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HeartRateController;
 use App\Http\Controllers\JsonAsyncController;
 use App\Http\Controllers\JsonController;
 use Illuminate\Support\Facades\Route;
@@ -21,9 +22,19 @@ Route::get('/', function () {
 
 Route::post('/json_process',[JsonController::class,'process'])->name('json_process');
 
+//非同期通信処理
 Route::post('/json_async',[JsonAsyncController::class,'process'])->name('json_async');
 
 
+//心拍数グラフ
 Route::get('/heartrate', function () {
     return view('heartrate');
 });
+
+Route::post('/heartrate_process',[HeartRateController::class,'process'])->name('heartrate_process');
+
+//JavaScriptだけで実装
+Route::get('/onlyjs', function () {
+    return view('onlyJs');
+});
+
