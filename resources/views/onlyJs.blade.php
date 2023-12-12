@@ -41,9 +41,11 @@
             return depthMapping[depth];
         }
 
-        let epochsDatas;
+        let epochsDatas = '';
         let results = [];
         let chartCounter = 1;
+        let newSleepAt = '';
+        let newWakeUpAt = '';
 
         // ファイルの読み込みとオブジェクト形式に変換
         const form = document.forms.inputForm;
@@ -60,6 +62,31 @@
                 // 外部のepochsDatasに値を設定
                 epochsDatas = jsonFile["epochs"];
                 console.log(epochsDatas);
+
+                //睡眠開始と終了時刻の処理
+                const sleepAt = getStrtotime(jsonFile["sleepAt"]);
+                const wakeUpAt = getStrtotime(jsonFile["wakeUpAt"]);
+
+                console.log(sleepAt);
+                console.log(wakeUpAt);
+
+                const sleepAtDate = new Date(sleepAt);
+                const wakeUpDate = new Date(wakeUpAt);
+
+
+                console.log(sleepAtDate);
+                console.log(wakeUpDate);
+
+                newSleepAt = sleepAtDate.getFullYear() + '/' + (sleepAtDate.getMonth() + 1) + '/' +
+                    sleepAtDate.getDate() + ' ' + sleepAtDate.getHours() + ':' + sleepAtDate.getMinutes() + ':' +
+                    sleepAtDate.getSeconds();
+
+                newWakeUpAt = wakeUpDate.getFullYear() + '/' + (wakeUpDate.getMonth() + 1) + '/' +
+                    wakeUpDate.getDate() + ' ' + wakeUpDate.getHours() + ':' + wakeUpDate.getMinutes() + ':' +
+                    wakeUpDate.getSeconds();
+
+                console.log(newSleepAt);
+                console.log(newWakeUpAt);
 
                 // 睡眠深度変換の処理と睡眠深度ごとにグループ化
                 let results = [];
@@ -108,6 +135,20 @@
             const newChart = document.createElement('div');
             newChart.id = 'graph' + chartCounter;
             newContainer.appendChild(newChart);
+
+
+
+            //睡眠開始表示の処理
+            const sleepAttime = document.createElement('p');
+            sleepAttime.id = 'sleep-at' + chartCounter;
+            newContainer.appendChild(sleepAttime);
+            document.getElementById(sleepAttime.id).innerHTML = "睡眠開始: " + newSleepAt;
+
+            //睡眠終了表示の処理
+            const wakeUpTime = document.createElement('p');
+            wakeUpTime.id = 'wakeup-at' + chartCounter;
+            newContainer.appendChild(wakeUpTime);
+            document.getElementById(wakeUpTime.id).innerHTML = "睡眠終了: " + newWakeUpAt;
 
             //メニューの日本語化
             Highcharts.setOptions({
