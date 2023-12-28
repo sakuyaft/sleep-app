@@ -10,158 +10,77 @@
 
 <body>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/xrange.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-    <form enctype="multipart/form-data">
-        @csrf
-        <input type="file" id="JsonFile" name="JsonFile">
-        <button type="button" onclick="jsonUpload()">jsonアップロード</button>
+    <form name="inputForm">
+        <input type="file" name="fileInput" id="fileInput">
     </form>
 
     <figure class="highcharts-figure">
+        <div id="container"></div>
     </figure>
 
     <script>
-        //カウンターセット
-        let chartCounter = 1;
+        Highcharts.chart('container', {
 
-        //メニューの日本語化
-        Highcharts.setOptions({
-            lang: {
-                viewFullscreen: '全画面で表示',
-                contextButtonTitle: '画像としてダウンロード',
-                printChart: 'グラフを印刷',
-                downloadJPEG: 'JPEG画像でダウンロード',
-                downloadPDF: 'PDF文書でダウンロード',
-                downloadPNG: 'PNG画像でダウンロード',
-                downloadSVG: 'SVG形式でダウンロード',
-            }
-        });
+            title: {
+                text: 'ミリ波心拍数グラフ',
+                align: 'left'
+            },
 
-        function jsonUpload() {
+            yAxis: {
+                title: {
+                    text: '心拍数'
+                }
+            },
 
-            const jsonFileInput = document.getElementById('JsonFile');
-            const fd = new FormData();
-            fd.append('JsonFile', jsonFileInput.files[0]);
+            xAxis: {
+                accessibility: {
+                    rangeDescription: 'Range: 2010 to 2020'
+                }
+            },
 
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
 
-            fetch('{{ route('heartrate_process') }}', {
-                    method: 'POST',
-                    body: fd,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
                     },
-                })
-                .then((response) => {
-                    if (!response.ok) {
-                        console.log('error!');
-                    } else {
-                        console.log('ok!')
-                    };
-                    return response.json();
+                    pointStart: 2010
+                }
+            },
 
-                })
-                .then((data) => {
-                    console.log(data);
+            series: [{
+                // name: 'Installation & Developers',
+                data: [43934, 48656, 65165, 81827, 112143, 142383,
+                    171533, 165174, 155157, 161454, 154610
+                ]
+            }, 
+        ],
 
-                    //新しいcontainerを作成
-                    const newContainer = document.createElement('div');
-                    newContainer.id = 'container' + chartCounter;
-                    const figureArea = document.querySelector('figure');
-                    figureArea.appendChild(newContainer);
-
-                    //睡眠開始表示の処理
-                    const sleepAttime = document.createElement('p');
-                    sleepAttime.id = 'sleep-at' + chartCounter;
-                    newContainer.appendChild(sleepAttime);
-                    document.getElementById(sleepAttime.id).innerHTML = "睡眠開始: " + data.newSleepAt;
-
-                    //睡眠終了表示の処理
-                    const wakeUpTime = document.createElement('p');
-                    wakeUpTime.id = 'wakeup-at' + chartCounter;
-                    newContainer.appendChild(wakeUpTime);
-                    document.getElementById(wakeUpTime.id).innerHTML = "睡眠終了: " + data.newWakeUpAt;
-
-                    //新しいグラフを追加
-                    const newChart = document.createElement('div');
-                    newChart.id = 'graph' + chartCounter;
-                    newContainer.appendChild(newChart);
-
-                    //グラフ描画の処理
-                    Highcharts.chart(newChart, {
-                        
-                        title: {
-                            text: '心拍数グラフ'
-                        },
-
-                        time: {
-                            useUTC: false,
-                            timezone: 'Asia/Tokyo',
-                        },
-                        accessibility: {
-                            point: {
-                                descriptionFormat: '{add index 1}. {yCategory}, {x:%A %e %B %Y} to {x2:%A %e %B %Y}.'
-                            }
-                        },
-                        xAxis: {
-                            type: 'datetime'
-                        },
-                        yAxis: {
-                            title: {
-                                text: '心拍数'
-                            },
-                        },
-                        series: [{
-                            name: 'グラフ' + chartCounter,
-                            data: data.result,
-
-                            borderColor: 'gray',
-                            pointWidth: 40,
-                            dataLabels: {
-                                enabled: true
-                            }
-                        }],
-
-                        exporting: {
-                            menuItemDefinitions: {
-                                // Custom definition
-                                lavel: {
-                                    onclick: function() {
-                                        // const chartId = this.id;
-                                        const containerElement = document.getElementById(newContainer.id);
-                                        if (containerElement) {
-                                            containerElement.remove();
-                                        }
-                                    },
-                                    text: '削除'
-                                }
-                            },
-                            buttons: {
-                                contextButton: {
-                                    menuItems: ['downloadPNG', 'downloadSVG', 'separator', 'lavel'],
-                                }
-                            }
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
                         }
-
-                    });
-
-                    chartCounter++;
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-        };
-
-        //削除処理の内容
-        function deleteChart(chartCounter) {
-            const containerToRemove = document.getElementById('container' + chartCounter);
-            if (containerToRemove) {
-                containerToRemove.remove();
+                    }
+                }]
             }
-        }
+
+        });
     </script>
     <style>
         .highcharts-figure,
