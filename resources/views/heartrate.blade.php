@@ -5,15 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>ミリ波グラフ</title>
+    <title>ミリ波心拍数グラフ</title>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 </head>
 
 <body>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/xrange.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
     <form name="inputForm">
         <input type="file" name="fileInput" id="fileInput">
     </form>
@@ -23,65 +23,104 @@
     </figure>
 
     <script>
-        Highcharts.chart('container', {
+        //時間をUNIX*1000のデータ形式に変更
+        function getStrtotime(inputData) {
+            let date = new Date(inputData);
+            let newData = date.getTime();
+            return newData;
+        }
 
-            title: {
-                text: 'ミリ波心拍数グラフ',
-                align: 'left'
-            },
+        let values = [];
+        let heartRateDatas = [];
 
-            yAxis: {
-                title: {
-                    text: '心拍数'
-                }
-            },
+        // ファイルの読み込み
+        const form = document.forms.inputForm;
+        form.fileInput.addEventListener('change', function(e) {
+            const result = e.target.files[0];
+            const reader = new FileReader();
 
-            xAxis: {
-                accessibility: {
-                    rangeDescription: 'Range: 2010 to 2020'
-                }
-            },
+            reader.readAsText(result);
 
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle'
-            },
+            reader.addEventListener('load', function() {
+                //オブジェクト形式に変換
+                const jsonFile = JSON.parse(reader.result);
+                console.log(jsonFile);
 
-            plotOptions: {
-                series: {
-                    label: {
-                        connectorAllowed: false
-                    },
-                    pointStart: 2010
-                }
-            },
+                // resultsに値を設定
+                values = jsonFile["values"];
+                console.log(values);
 
-            series: [{
-                // name: 'Installation & Developers',
-                data: [43934, 48656, 65165, 81827, 112143, 142383,
-                    171533, 165174, 155157, 161454, 154610
-                ]
-            }, 
-        ],
+                //ループを使用して[sensingAt, average]の配列を作成する
+                // const newArray = values.map(item => [item.sensingAt, item.heartRate.average]);
+                // console.log(newArray);
 
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        legend: {
-                            layout: 'horizontal',
-                            align: 'center',
-                            verticalAlign: 'bottom'
-                        }
-                    }
-                }]
-            }
+                let results = [];
 
+                values.forEach(value => {
+                    const time = getStrtotime(value["sensingAt"]);
+                    const average = value["heartRate"]["average"];
+
+                    results.push([time, average]);
+
+                });
+
+                console.log(results);
+                drawGraph(results);
+            });
         });
+
+        function drawGraph(results) {
+
+            Highcharts.chart('container', {
+
+                title: {
+                    text: '心拍数グラフ'
+                },
+
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: '心拍数'
+                    }
+                },
+                series: [{
+                    // type: 'line',
+                    // name: 'USD to EUR',
+                    data: results
+                }]
+            })
+        }
+        // (async () => {
+
+        //     const data = await fetch(
+        //         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        //     ).then(response => response.json());
+
+        //     Highcharts.chart('container', {
+
+        //         title: {
+        //             text: '心拍数グラフ'
+        //         },
+
+        //         xAxis: {
+        //             type: 'datetime'
+        //         },
+        //         yAxis: {
+        //             title: {
+        //                 text: '心拍数'
+        //             }
+        //         },
+        //         series: [{
+        //             // type: 'line',
+        //             // name: 'USD to EUR',
+        //             data: data
+        //         }]
+        //     });
+        // })();
     </script>
+
     <style>
         .highcharts-figure,
         .highcharts-data-table table {
@@ -116,16 +155,8 @@
         .highcharts-data-table caption {
             padding: 0.5em;
         }
-
-        .highcharts-data-table thead tr,
-        .highcharts-data-table tr:nth-child(even) {
-            background: #f8f8f8;
-        }
-
-        .highcharts-data-table tr:hover {
-            background: #f1f7ff;
-        }
     </style>
+
 </body>
 
 </html>
