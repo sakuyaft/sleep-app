@@ -50,10 +50,36 @@
                 values = jsonFile["values"];
                 console.log(values);
 
-                //ループを使用して[sensingAt, average]の配列を作成する
-                // const newArray = values.map(item => [item.sensingAt, item.heartRate.average]);
-                // console.log(newArray);
+                //睡眠開始終了時間の取得・処理
+                let firstSensingAt, lastSensingAt ; 
+                if(values.length > 0) {
+                    firstSensingAt = getStrtotime(values[0]["sensingAt"]);
+                    lastSensingAt = getStrtotime(values[values.length - 1]["sensingAt"]);
 
+                    // const firstSensingAt = values[0]["sensingAt"];
+                    // const lastSensingAt = values[values.length - 1]["sensingAt"];
+                    console.log("firstSensingAt", firstSensingAt);
+                    console.log("lastSensingAt", lastSensingAt);
+                }
+                
+                const sleepAtDate = new Date(firstSensingAt);
+                const wakeUpDate = new Date(lastSensingAt);
+
+                console.log("sleepAtDate", sleepAtDate);
+                console.log("wakeUpDate:",wakeUpDate);
+
+                newSleepAt = sleepAtDate.getFullYear() + '/' + (sleepAtDate.getMonth() + 1) + '/' +
+                    sleepAtDate.getDate() + ' ' + sleepAtDate.getHours() + ':' + sleepAtDate.getMinutes() + ':' +
+                    sleepAtDate.getSeconds();
+
+                newWakeUpAt = wakeUpDate.getFullYear() + '/' + (wakeUpDate.getMonth() + 1) + '/' +
+                    wakeUpDate.getDate() + ' ' + wakeUpDate.getHours() + ':' + wakeUpDate.getMinutes() + ':' +
+                    wakeUpDate.getSeconds();
+
+                console.log(newSleepAt);
+                console.log(newWakeUpAt);
+
+                //心拍数平均データの取得・処理
                 let results = [];
 
                 values.forEach(value => {
@@ -63,13 +89,16 @@
                     results.push([time, average]);
 
                 });
-
                 console.log(results);
+
+                
+
                 drawGraph(results);
             });
         });
 
         function drawGraph(results) {
+
 
             Highcharts.chart('container', {
 
@@ -77,6 +106,10 @@
                     text: '心拍数グラフ'
                 },
 
+                time: {
+                    useUTC: false,
+                    timezone: 'Asia/Tokyo',
+                },
                 xAxis: {
                     type: 'datetime'
                 },
