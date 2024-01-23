@@ -18,11 +18,11 @@
         <input type="file" name="fileInput" id="fileInput">
     </form>
 
-    <figure class="highcharts-figure">
-        <div id="container"></div>
-        <div id="sleepAttime"></div>
-        <div id="wakeUpTime"></div>
-    </figure>
+    <div id="container">
+        <figure id="figureId" class="highcharts-figure">
+            <div id="graph"></div>
+        </figure>
+    </div>
 
     <script>
         //時間をUNIX*1000のデータ形式に変更
@@ -34,6 +34,8 @@
 
         let values = [];
         let heartRateDatas = [];
+        let newSleepAt = '';
+        let newWakeUpAt = '';
 
         // ファイルの読み込み
         const form = document.forms.inputForm;
@@ -78,8 +80,8 @@
                     wakeUpDate.getDate() + ' ' + wakeUpDate.getHours() + ':' + wakeUpDate.getMinutes() + ':' +
                     wakeUpDate.getSeconds();
 
-                console.log(newSleepAt);
-                console.log(newWakeUpAt);
+                console.log('newSleepAt', newSleepAt);
+                console.log('newWakeUpAt', newWakeUpAt);
 
                 //心拍数平均データの取得・処理
                 let results = [];
@@ -98,21 +100,27 @@
         });
 
         function drawGraph(results) {
-            //睡眠開始と終了の時間表示
-            const sleepAttime = document.getElementById('sleepAttime');
-            const wakeUpTime = document.getElementById('wakeUpTime');
-            
+            const graph = document.getElementById('graph');
+
             // 新しい要素を作成して内容を追加
-            const newSleepAt = "2024-01-19 12:34:56";
             const newSleepAtElement = document.createElement('div');
-            newSleepAtElement.innerHTML = "睡眠開始: " + newSleepAt;
+            newSleepAtElement.id = 'sleepAttime';
+            newSleepAtElement.innerHTML = "入眠: " + newSleepAt;
+
+            const newWakeUpAtElement = document.createElement('div');
+            newWakeUpAtElement.id = 'wakeUpTime';
+            newWakeUpAtElement.innerHTML = "起床: " + newWakeUpAt;
 
             //新しい要素をsleepAttimeに追加
-            sleepAttime.appendChild(newSleepAtElement);
+            figureId.appendChild(newSleepAtElement);
+            figureId.appendChild(newWakeUpAtElement);
+            // container.appendChild(newSleepAtElement);
+            // container.appendChild(newWakeUpAtElement);
 
             console.log("newSleepAt:", newSleepAt);
+            console.log("newWakeUpAt:", newWakeUpAt);
 
-            Highcharts.chart('container', {
+            Highcharts.chart('graph', {
 
                 title: {
                     text: '心拍数グラフ'
