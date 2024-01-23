@@ -20,6 +20,8 @@
 
     <figure class="highcharts-figure">
         <div id="container"></div>
+        <div id="sleepAttime"></div>
+        <div id="wakeUpTime"></div>
     </figure>
 
     <script>
@@ -51,8 +53,8 @@
                 console.log(values);
 
                 //睡眠開始終了時間の取得・処理
-                let firstSensingAt, lastSensingAt ; 
-                if(values.length > 0) {
+                let firstSensingAt, lastSensingAt;
+                if (values.length > 0) {
                     firstSensingAt = getStrtotime(values[0]["sensingAt"]);
                     lastSensingAt = getStrtotime(values[values.length - 1]["sensingAt"]);
 
@@ -61,12 +63,12 @@
                     console.log("firstSensingAt", firstSensingAt);
                     console.log("lastSensingAt", lastSensingAt);
                 }
-                
+
                 const sleepAtDate = new Date(firstSensingAt);
                 const wakeUpDate = new Date(lastSensingAt);
 
                 console.log("sleepAtDate", sleepAtDate);
-                console.log("wakeUpDate:",wakeUpDate);
+                console.log("wakeUpDate:", wakeUpDate);
 
                 newSleepAt = sleepAtDate.getFullYear() + '/' + (sleepAtDate.getMonth() + 1) + '/' +
                     sleepAtDate.getDate() + ' ' + sleepAtDate.getHours() + ':' + sleepAtDate.getMinutes() + ':' +
@@ -91,14 +93,24 @@
                 });
                 console.log(results);
 
-                
-
                 drawGraph(results);
             });
         });
 
         function drawGraph(results) {
+            //睡眠開始と終了の時間表示
+            const sleepAttime = document.getElementById('sleepAttime');
+            const wakeUpTime = document.getElementById('wakeUpTime');
+            
+            // 新しい要素を作成して内容を追加
+            const newSleepAt = "2024-01-19 12:34:56";
+            const newSleepAtElement = document.createElement('div');
+            newSleepAtElement.innerHTML = "睡眠開始: " + newSleepAt;
 
+            //新しい要素をsleepAttimeに追加
+            sleepAttime.appendChild(newSleepAtElement);
+
+            console.log("newSleepAt:", newSleepAt);
 
             Highcharts.chart('container', {
 
@@ -125,33 +137,6 @@
                 }]
             })
         }
-        // (async () => {
-
-        //     const data = await fetch(
-        //         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
-        //     ).then(response => response.json());
-
-        //     Highcharts.chart('container', {
-
-        //         title: {
-        //             text: '心拍数グラフ'
-        //         },
-
-        //         xAxis: {
-        //             type: 'datetime'
-        //         },
-        //         yAxis: {
-        //             title: {
-        //                 text: '心拍数'
-        //             }
-        //         },
-        //         series: [{
-        //             // type: 'line',
-        //             // name: 'USD to EUR',
-        //             data: data
-        //         }]
-        //     });
-        // })();
     </script>
 
     <style>
