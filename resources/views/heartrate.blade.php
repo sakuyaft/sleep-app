@@ -68,13 +68,23 @@
                 console.log("sleepAtDate", sleepAtDate);
                 console.log("wakeUpDate:", wakeUpDate);
 
-                newSleepAt = sleepAtDate.getFullYear() + '/' + (sleepAtDate.getMonth() + 1) + '/' +
-                    sleepAtDate.getDate() + ' ' + sleepAtDate.getHours() + ':' + sleepAtDate.getMinutes() + ':' +
-                    sleepAtDate.getSeconds();
+                var YYYY = sleepAtDate.getFullYear(); //年を取得
+                var MM = sleepAtDate.getMonth() + 1; //月を取得
+                var DD = ("0" + sleepAtDate.getDate()).slice(-2); //日を取得
+                var hh = ("0" + sleepAtDate.getHours()).slice(-2); //時間を取得
+                var mm = ("0" + sleepAtDate.getMinutes()).slice(-2); //分を取得
+                var ss = ("0" + sleepAtDate.getSeconds()).slice(-2); //秒を取得
 
-                newWakeUpAt = wakeUpDate.getFullYear() + '/' + (wakeUpDate.getMonth() + 1) + '/' +
-                    wakeUpDate.getDate() + ' ' + wakeUpDate.getHours() + ':' + wakeUpDate.getMinutes() + ':' +
-                    wakeUpDate.getSeconds();
+                newSleepAt =  YYYY + "/" + MM + "/" + DD +" "+ hh +":"+ mm +":"+ ss; 
+
+                var YYYY = wakeUpDate.getFullYear(); //年を取得
+                var MM = wakeUpDate.getMonth() + 1; //月を取得
+                var DD = ("0" + wakeUpDate.getDate()).slice(-2); //日を取得
+                var hh = ("0" + wakeUpDate.getHours()).slice(-2); //時間を取得
+                var mm = ("0" + wakeUpDate.getMinutes()).slice(-2); //分を取得
+                var ss = ("0" + wakeUpDate.getSeconds()).slice(-2); //秒を取得
+
+                newWakeUpAt = YYYY + "/" + MM + "/" + DD +" "+ hh +":"+ mm +":"+ ss;
 
                 console.log('newSleepAt', newSleepAt);
                 console.log('newWakeUpAt', newWakeUpAt);

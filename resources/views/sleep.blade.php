@@ -50,13 +50,13 @@
 
         // ファイルの読み込みとオブジェクト形式に変換
         const form = document.forms.inputForm;
-        form.fileInput.addEventListener('change', function(e) {
+        form.fileInput.addEventListener('change', function (e) {
             const result = e.target.files[0];
             const reader = new FileReader();
 
             reader.readAsText(result);
 
-            reader.addEventListener('load', function() {
+            reader.addEventListener('load', function () {
                 const jsonFile = JSON.parse(reader.result);
                 console.log(jsonFile);
 
@@ -78,13 +78,23 @@
                 console.log(sleepAtDate);
                 console.log(wakeUpDate);
 
-                newSleepAt = sleepAtDate.getFullYear() + '/' + (sleepAtDate.getMonth() + 1) + '/' +
-                    sleepAtDate.getDate() + ' ' + sleepAtDate.getHours() + ':' + sleepAtDate.getMinutes() + ':' +
-                    sleepAtDate.getSeconds();
+                var YYYY = sleepAtDate.getFullYear(); //年を取得
+                var MM = sleepAtDate.getMonth() + 1; //月を取得
+                var DD = ("0" + sleepAtDate.getDate()).slice(-2); //日を取得
+                var hh = ("0" + sleepAtDate.getHours()).slice(-2); //時間を取得
+                var mm = ("0" + sleepAtDate.getMinutes()).slice(-2); //分を取得
+                var ss = ("0" + sleepAtDate.getSeconds()).slice(-2); //秒を取得
 
-                newWakeUpAt = wakeUpDate.getFullYear() + '/' + (wakeUpDate.getMonth() + 1) + '/' +
-                    wakeUpDate.getDate() + ' ' + wakeUpDate.getHours() + ':' + wakeUpDate.getMinutes() + ':' +
-                    wakeUpDate.getSeconds();
+                newSleepAt =  YYYY + "/" + MM + "/" + DD +" "+ hh +":"+ mm +":"+ ss; 
+
+                var YYYY = wakeUpDate.getFullYear(); //年を取得
+                var MM = wakeUpDate.getMonth() + 1; //月を取得
+                var DD = ("0" + wakeUpDate.getDate()).slice(-2); //日を取得
+                var hh = ("0" + wakeUpDate.getHours()).slice(-2); //時間を取得
+                var mm = ("0" + wakeUpDate.getMinutes()).slice(-2); //分を取得
+                var ss = ("0" + wakeUpDate.getSeconds()).slice(-2); //秒を取得
+
+                newWakeUpAt = YYYY + "/" + MM + "/" + DD +" "+ hh +":"+ mm +":"+ ss;
 
                 console.log(newSleepAt);
                 console.log(newWakeUpAt);
@@ -93,7 +103,7 @@
                 let results = [];
                 let cnt = 0;
 
-                epochsDatas.forEach(function(epochData, index) {
+                epochsDatas.forEach(function (epochData, index) {
                     const time = getStrtotime(epochData["analyzedAt"]);
                     const newDepth = getDepth(epochData["depth"]);
 
@@ -110,8 +120,8 @@
 
                     // 次のデータがあり、睡眠深度が変わった場合は配列を1つ進める
                     if (epochsDatas[index + 1] && newDepth !== getDepth(epochsDatas[index + 1][
-                            "depth"
-                        ])) {
+                        "depth"
+                    ])) {
                         cnt++;
                     }
 
@@ -140,13 +150,13 @@
 
 
             //睡眠開始表示の処理
-            const sleepAttime = document.createElement('p');
+            const sleepAttime = document.createElement('div');
             sleepAttime.id = 'sleep-at' + chartCounter;
             newContainer.appendChild(sleepAttime);
             document.getElementById(sleepAttime.id).innerHTML = "入眠: " + newSleepAt;
 
             //睡眠終了表示の処理
-            const wakeUpTime = document.createElement('p');
+            const wakeUpTime = document.createElement('div');
             wakeUpTime.id = 'wakeup-at' + chartCounter;
             newContainer.appendChild(wakeUpTime);
             document.getElementById(wakeUpTime.id).innerHTML = "起床: " + newWakeUpAt;
@@ -207,7 +217,7 @@
                     menuItemDefinitions: {
                         // Custom definition
                         lavel: {
-                            onclick: function() {
+                            onclick: function () {
                                 // const chartId = this.id;
                                 const containerElement = document.getElementById(newContainer.id);
                                 if (containerElement) {
@@ -242,10 +252,10 @@
         }
     </script>
     <style>
-        h1{
+        h1 {
             text-align: center;
         }
-        
+
         #inputForm {
             text-align: center;
         }
@@ -257,12 +267,13 @@
             margin: auto
         }
 
-        p[id^="sleep-at"] {
+        div[id^="sleep-at"] {
             text-align: center;
         }
 
-        p[id^="wakeup-at"] {
+        div[id^="wakeup-at"] {
             text-align: center;
+            margin-bottom: 20px;
         }
 
 
