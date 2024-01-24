@@ -170,7 +170,7 @@
                     type: 'xrange'
                 },
                 title: {
-                    text: '睡眠グラフ'
+                    text: 'ミリ波睡眠グラフ'
                 },
 
                 time: {

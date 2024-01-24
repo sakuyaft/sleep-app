@@ -34,7 +34,7 @@ Route::get('/heartrate', function () {
 Route::post('/heartrate_process',[HeartRateController::class,'process'])->name('heartrate_process');
 
 //JavaScriptだけで実装
-Route::get('/onlyjs', function () {
+Route::get('/sleep', function () {
     return view('onlyJs');
 });
 

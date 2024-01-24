@@ -33,16 +33,17 @@
         let heartRateDatas = [];
         let newSleepAt = '';
         let newWakeUpAt = '';
+        let averageRate = '';
 
         // ファイルの読み込み
         const form = document.forms.inputForm;
-        form.fileInput.addEventListener('change', function (e) {
+        form.fileInput.addEventListener('change', function(e) {
             const result = e.target.files[0];
             const reader = new FileReader();
 
             reader.readAsText(result);
 
-            reader.addEventListener('load', function () {
+            reader.addEventListener('load', function() {
                 //オブジェクト形式に変換
                 const jsonFile = JSON.parse(reader.result);
                 console.log(jsonFile);
@@ -78,7 +79,7 @@
                 console.log('newSleepAt', newSleepAt);
                 console.log('newWakeUpAt', newWakeUpAt);
 
-                //心拍数平均データの取得・処理
+                //心拍数データの取得・処理
                 let results = [];
 
                 values.forEach(value => {
@@ -90,6 +91,15 @@
                 });
                 console.log(results);
 
+                //心拍数平均算出
+                let sum = 0;
+
+                for (let i = 0; i < results.length; i++) {
+                    sum += results[i][1];
+                }
+                data = sum / results.length
+                averageRate = data.toFixed(0)
+                console.log(averageRate);
                 drawGraph(results);
             });
         });
@@ -113,18 +123,24 @@
             newSleepAtElement.id = 'sleep-at' + chartCounter;
             newContainer.appendChild(newSleepAtElement);
             document.getElementById(newSleepAtElement.id).innerHTML = "入眠: " + newSleepAt;
-            
+
             const newWakeUpAtElement = document.createElement('div');
             newWakeUpAtElement.id = 'wakeup-at' + chartCounter;
             newContainer.appendChild(newWakeUpAtElement);
             document.getElementById(newWakeUpAtElement.id).innerHTML = "起床: " + newWakeUpAt;
-            
+
             //新しい要素をsleepAttimeに追加
             newContainer.appendChild(newSleepAtElement);
             newContainer.appendChild(newWakeUpAtElement);
 
             console.log("newSleepAt:", newSleepAt);
             console.log("newWakeUpAt:", newWakeUpAt);
+
+            //心拍数平均追加
+            const average = document.createElement('div');
+            average.id = 'average' + chartCounter;
+            newContainer.appendChild(average);
+            // document.getElementById(average.id).innerHTML = "心拍数平均: " + averageRate;
 
             //メニューの日本語化
             Highcharts.setOptions({
@@ -142,7 +158,15 @@
             Highcharts.chart(newChart, {
 
                 title: {
-                    text: '心拍数グラフ'
+                    text: 'ミリ波心拍数グラフ'
+                },
+
+                subtitle: {
+                    text: '平均値 : ' + averageRate,
+                    style: {
+                        fontWeight: 'bold',
+                        fontSize: '20px' 
+                    }
                 },
 
                 time: {
@@ -167,7 +191,7 @@
                     menuItemDefinitions: {
                         // Custom definition
                         lavel: {
-                            onclick: function () {
+                            onclick: function() {
                                 // const chartId = this.id;
                                 const containerElement = document.getElementById(newContainer.id);
                                 if (containerElement) {
@@ -202,6 +226,15 @@
     <style>
         h1 {
             text-align: center;
+        }
+
+        div[id^="sleep-at"] {
+            text-align: center;
+        }
+
+        div[id^="wakeup-at"] {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         #inputForm {
